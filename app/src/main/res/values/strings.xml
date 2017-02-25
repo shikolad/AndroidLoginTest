@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Android Login</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_login">Login</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="title_activity_post_login">PostLoginActivity</string>
+    <string name="greetings">Greetings!</string>
+    <string name="wrong_login_input">Spacebar and dot are not allowed in login!</string>
+    <string name="short_value_error" formatted="false">Should be at least %d characters!</string>
+    <string name="password_consecutive_error">Password should not have same consecutive characters!</string>
+    <string name="password_number_letter_count_error">At least 3 numbers and 3 letters required!</string>
+    <string name="error_in_login_or_password">Error in login or password!</string>
+</resources>
