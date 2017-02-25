@@ -17,4 +17,5 @@
     <string name="password_consecutive_error">Password should not have same consecutive characters!</string>
     <string name="password_number_letter_count_error">At least 3 numbers and 3 letters required!</string>
     <string name="error_in_login_or_password">Error in login or password!</string>
+    <string name="login_error">Login error!</string>
 </resources>

@@ -35,7 +35,7 @@ public class AppPasswordStorage extends PasswordStorage {
 
         try{
             passwordOutputStream = mContext.openFileOutput(mPasswordFileName,Context.MODE_PRIVATE);
-            String encrypted = mEncryptor.encrypt(name + " " + password);
+            String encrypted = mEncryptor.encrypt(name + " " + password, password);
             Log.w("encrypted",encrypted);
             passwordOutputStream.write(encrypted.getBytes());
             passwordOutputStream.close();
@@ -57,7 +57,7 @@ public class AppPasswordStorage extends PasswordStorage {
         try{
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String data = reader.readLine();
-            result = mEncryptor.decrypt(data);
+            result = mEncryptor.decrypt(data, password);
 
 
         } catch (FileNotFoundException e) {

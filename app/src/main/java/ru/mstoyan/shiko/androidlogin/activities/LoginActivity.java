@@ -93,6 +93,9 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
 
+        mLoginView.setText("qwer");
+        mPasswordView.setText("qwe123");
+
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -128,7 +131,7 @@ public class LoginActivity extends AppCompatActivity{
                 postLoginIntent.putExtra(PostLoginActivity.USERNAME_KEY,getLoginString());
                 startActivity(postLoginIntent);
             } else {
-                Toast.makeText(this,"Login error!",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.login_error,Toast.LENGTH_LONG).show();
             }
         } else {
             Toast.makeText(this,R.string.error_in_login_or_password,Toast.LENGTH_LONG).show();

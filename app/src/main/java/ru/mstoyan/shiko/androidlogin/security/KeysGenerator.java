@@ -19,8 +19,7 @@ class KeysGenerator {
     private static final int AES_KEY_LENGTH_BITS = 128;
     private static final String SALT = "P':/>pc$^Uv?LA725;!2r*)42}Ow/^1B\n";
     private static final int SALT_LENGTH = 16;
-//    private static final int PBE_ITERATION_COUNT = 10000;
-    private static final int PBE_ITERATION_COUNT = 100;
+    private static final int PBE_ITERATION_COUNT = 1000;
     private static final int HMAC_KEY_LENGTH_BITS = 256;
     private static final String PBE_ALGORITHM = "PBKDF2WithHmacSHA1";
 
@@ -50,7 +49,9 @@ class KeysGenerator {
                 SALT.substring(7, 10) +
                 AES_KEY_LENGTH_BITS +
                 SALT.codePointAt(24) +
-                SALT_LENGTH;
+                SALT_LENGTH +
+                "35" +
+                SALT.charAt(4);
         return saltBuilder;
     }
 

@@ -27,9 +27,9 @@ public class AES_CBC_PKC_Encryptor extends Encryptor{
     private static final int IV_LENGTH_BYTES = 16;
     private static final int BASE64_FLAGS = Base64.NO_WRAP;
 
-    public String encrypt(String str) throws UnsupportedEncodingException, GeneralSecurityException {
+    public String encrypt(String str, String password) throws UnsupportedEncodingException, GeneralSecurityException {
 
-        KeysGenerator.KeysPair keysPair = KeysGenerator.generateConfidentialKey(str,CIPHER_ALGORITHM);
+        KeysGenerator.KeysPair keysPair = KeysGenerator.generateConfidentialKey(password,CIPHER_ALGORITHM);
 
         byte[] rawData = str.getBytes(ENCODING);
 
@@ -43,9 +43,9 @@ public class AES_CBC_PKC_Encryptor extends Encryptor{
         return struct.toString();
     }
 
-    public String decrypt(String str) throws ParseException, GeneralSecurityException {
+    public String decrypt(String str, String password) throws ParseException, GeneralSecurityException {
 
-        KeysGenerator.KeysPair keysPair = KeysGenerator.generateConfidentialKey(str,CIPHER_ALGORITHM);
+        KeysGenerator.KeysPair keysPair = KeysGenerator.generateConfidentialKey(password,CIPHER_ALGORITHM);
 
         EncryptedStruct data = new EncryptedStruct(str);
         if (!data.checkMacIntegrity(keysPair.integrityKey)){
@@ -56,7 +56,8 @@ public class AES_CBC_PKC_Encryptor extends Encryptor{
         aesCipherForEncryption.init(Cipher.DECRYPT_MODE, keysPair.confidentialityKey, new IvParameterSpec(data.mIv));
         byte[] decrypted = aesCipherForEncryption.doFinal(data.mEncoded);
 
-        return new String(decrypted);
+        String result = new String(decrypted);
+        return result;
     }
 
     private boolean constantTimeEq(byte[] a, byte[] b){

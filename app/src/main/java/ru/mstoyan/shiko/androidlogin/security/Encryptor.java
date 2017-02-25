@@ -16,6 +16,6 @@ import javax.crypto.NoSuchPaddingException;
  */
 
 abstract class Encryptor {
-    public abstract String encrypt(String str) throws UnsupportedEncodingException, GeneralSecurityException;
-    public abstract String decrypt(String str) throws ParseException, GeneralSecurityException;
+    public abstract String encrypt(String str, String password) throws UnsupportedEncodingException, GeneralSecurityException;
+    public abstract String decrypt(String str, String password) throws ParseException, GeneralSecurityException;
 }
