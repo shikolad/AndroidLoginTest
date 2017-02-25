@@ -2,6 +2,7 @@ package ru.mstoyan.shiko.androidlogin.security;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
+
+import ru.mstoyan.shiko.androidlogin.R;
 
 /**
  * Saves and loads encrypted info.
@@ -40,14 +43,9 @@ public class AppPasswordStorage extends PasswordStorage {
             passwordOutputStream.write(encrypted.getBytes());
             passwordOutputStream.close();
 
-        }catch (FileNotFoundException e){
+        }catch ( GeneralSecurityException | IOException e){
             e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            Toast.makeText(mContext, R.string.error_saving_data,Toast.LENGTH_LONG).show();
         }
     }
 
@@ -60,13 +58,7 @@ public class AppPasswordStorage extends PasswordStorage {
             result = mEncryptor.decrypt(data, password);
 
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (GeneralSecurityException | IOException | ParseException e) {
             e.printStackTrace();
         }
         return result.equals(name + " " + password);

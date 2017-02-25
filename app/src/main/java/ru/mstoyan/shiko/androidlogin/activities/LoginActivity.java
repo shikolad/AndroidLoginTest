@@ -93,8 +93,8 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
 
-        mLoginView.setText("qwer");
-        mPasswordView.setText("qwe123");
+//        mLoginView.setText("qwer");
+//        mPasswordView.setText("qwe123");
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -127,8 +127,8 @@ public class LoginActivity extends AppCompatActivity{
     public void attemptLogin(){
         if (mLoginRule.check(getLoginString()) && mPasswordRule.check(getPasswordString())){
             if (mPasswordStorage.checkLoginData(getLoginString(),getPasswordString())){
-                Intent postLoginIntent = new Intent(this,PostLoginActivity.class);
-                postLoginIntent.putExtra(PostLoginActivity.USERNAME_KEY,getLoginString());
+                Intent postLoginIntent = new Intent(this,PostLoginActivity.class)
+                        .putExtra(PostLoginActivity.USERNAME_KEY,getLoginString());
                 startActivity(postLoginIntent);
             } else {
                 Toast.makeText(this, R.string.login_error,Toast.LENGTH_LONG).show();
