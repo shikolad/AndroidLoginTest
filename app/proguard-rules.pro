@@ -15,3 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keep class ru.mstoyan.shiko.androidlogin.activities.** { *;}
+-keep class ru.mstoyan.shiko.androidlogin.service.** { *;}
+-keep class ru.mstoyan.shiko.androidlogin.utility.** { *;}
+
+-keep class android.support.** { *; }

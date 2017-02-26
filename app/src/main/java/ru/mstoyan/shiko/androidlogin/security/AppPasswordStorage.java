@@ -17,7 +17,7 @@ import java.security.GeneralSecurityException;
 import java.text.ParseException;
 
 import ru.mstoyan.shiko.androidlogin.R;
-import ru.mstoyan.shiko.androidlogin.Service.DataRemoverService;
+import ru.mstoyan.shiko.androidlogin.service.DataRemoverService;
 
 /**
  * Saves and loads encrypted info.
@@ -60,8 +60,6 @@ public class AppPasswordStorage extends PasswordStorage {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String data = reader.readLine();
             result = mEncryptor.decrypt(data, password);
-
-
         } catch (GeneralSecurityException | IOException | ParseException e) {
             e.printStackTrace();
         }
@@ -87,9 +85,15 @@ public class AppPasswordStorage extends PasswordStorage {
 
     @Override
     public void removeData() {
+        //removing data
         File file = new File(mContext.getFilesDir(), mPasswordFileName);
         if (file.exists())
             file.delete();
+        //alarm to delete data is useless for now
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        Intent canceledIntent = new Intent(mContext, DataRemoverService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(mContext,0,canceledIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+        alarmManager.cancel(pendingIntent);
     }
 
     private void scheduleDataDeleting(){

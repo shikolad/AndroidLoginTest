@@ -17,8 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ru.mstoyan.shiko.androidlogin.R;
-import ru.mstoyan.shiko.androidlogin.Utility.Rules.LoginRule;
-import ru.mstoyan.shiko.androidlogin.Utility.Rules.PasswordRule;
+import ru.mstoyan.shiko.androidlogin.utility.Rules.LoginRule;
+import ru.mstoyan.shiko.androidlogin.utility.Rules.PasswordRule;
 import ru.mstoyan.shiko.androidlogin.security.AES_CBC_PKC_Encryptor;
 import ru.mstoyan.shiko.androidlogin.security.AppPasswordStorage;
 import ru.mstoyan.shiko.androidlogin.security.PasswordStorage;

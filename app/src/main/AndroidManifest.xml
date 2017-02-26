@@ -28,7 +28,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name=".Service.DataRemoverService"
+            android:name=".service.DataRemoverService"
             android:enabled="true"
             android:exported="true"></service>
     </application>

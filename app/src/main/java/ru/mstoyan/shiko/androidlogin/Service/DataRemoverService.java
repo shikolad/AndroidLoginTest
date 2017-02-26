@@ -1,4 +1,4 @@
-package ru.mstoyan.shiko.androidlogin.Service;
+package ru.mstoyan.shiko.androidlogin.service;
 
 import android.app.Service;
 import android.content.Intent;

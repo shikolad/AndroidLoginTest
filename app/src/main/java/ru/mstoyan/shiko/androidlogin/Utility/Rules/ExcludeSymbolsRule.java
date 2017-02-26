@@ -1,7 +1,6 @@
-package ru.mstoyan.shiko.androidlogin.Utility.Rules;
+package ru.mstoyan.shiko.androidlogin.utility.Rules;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import ru.mstoyan.shiko.androidlogin.R;
 
