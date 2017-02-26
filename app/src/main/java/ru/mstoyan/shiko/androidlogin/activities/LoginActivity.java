@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity{
         mLoginRule = new LoginRule(this);
         mPasswordRule = new PasswordRule(this);
         mPasswordStorage = new AppPasswordStorage(this, new AES_CBC_PKC_Encryptor());
-        mPasswordStorage.removeData();
+//        mPasswordStorage.removeData();
 
         // Set up the login form.
         mLoginView = (EditText) findViewById(R.id.login);
@@ -93,9 +93,6 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
 
-//        mLoginView.setText("qwer");
-//        mPasswordView.setText("qwe123");
-
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -104,6 +101,14 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLoginView.setText("");
+        mPasswordView.setText("");
+    }
+
     void checkUsername(){
         if (!mLoginRule.check(getLoginString()))
             mLoginView.setError(mLoginRule.getErrorMessage());

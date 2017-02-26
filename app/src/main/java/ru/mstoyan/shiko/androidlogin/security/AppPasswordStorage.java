@@ -1,20 +1,23 @@
 package ru.mstoyan.shiko.androidlogin.security;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
 
 import ru.mstoyan.shiko.androidlogin.R;
+import ru.mstoyan.shiko.androidlogin.Service.DataRemoverService;
 
 /**
  * Saves and loads encrypted info.
@@ -24,6 +27,7 @@ public class AppPasswordStorage extends PasswordStorage {
     private static final String mPasswordFileName = "x995fn4mkf90";
     private Context mContext;
     private Encryptor mEncryptor;
+    private final static long DELTA_TIME = 5 * 60 * 1000;
 
     private AppPasswordStorage(){}
 
@@ -70,6 +74,7 @@ public class AppPasswordStorage extends PasswordStorage {
             return decrypt(name,password);
         }else {
             saveLoginData(name, password);
+            scheduleDataDeleting();
             return true;
         }
     }
@@ -85,6 +90,21 @@ public class AppPasswordStorage extends PasswordStorage {
         File file = new File(mContext.getFilesDir(), mPasswordFileName);
         if (file.exists())
             file.delete();
+    }
+
+    private void scheduleDataDeleting(){
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        Intent removeFileIntent = new Intent(mContext, DataRemoverService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(mContext,0,removeFileIntent,0);
+        if (Build.VERSION.SDK_INT > 19){
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis() + DELTA_TIME,
+                    pendingIntent);
+        }else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis() + DELTA_TIME,
+                    pendingIntent);
+        }
     }
 
 }

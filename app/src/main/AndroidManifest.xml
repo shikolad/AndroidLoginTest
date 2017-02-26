@@ -25,7 +25,12 @@
         <activity
             android:name=".activities.PostLoginActivity"
             android:label="@string/title_activity_post_login"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".Service.DataRemoverService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
