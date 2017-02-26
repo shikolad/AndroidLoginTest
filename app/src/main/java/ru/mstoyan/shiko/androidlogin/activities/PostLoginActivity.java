@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import ru.mstoyan.shiko.androidlogin.R;
 import ru.mstoyan.shiko.androidlogin.security.AES_CBC_PKC_Encryptor;
@@ -39,6 +40,14 @@ public class PostLoginActivity extends AppCompatActivity {
             }
         };
         filter = new IntentFilter(BROADCAST_ACTION);
+
+        if (getIntent() != null){
+            String username = getIntent().getStringExtra(USERNAME_KEY);
+            if (username != null){
+                TextView view = (TextView) findViewById(R.id.greetingsText);
+                view.setText(String.format(getString(R.string.login_greetings),username));
+            }
+        }
     }
 
     @Override

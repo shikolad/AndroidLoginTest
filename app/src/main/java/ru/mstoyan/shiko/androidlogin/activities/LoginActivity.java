@@ -43,11 +43,9 @@ public class LoginActivity extends AppCompatActivity{
         mLoginRule = new LoginRule(this);
         mPasswordRule = new PasswordRule(this);
         mPasswordStorage = new AppPasswordStorage(this, new AES_CBC_PKC_Encryptor());
-//        mPasswordStorage.removeData();
 
         // Set up the login form.
         mLoginView = (EditText) findViewById(R.id.login);
-//        mLoginView.addTextChangedListener(new LoginTextWatcher(this));
         mLoginView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
