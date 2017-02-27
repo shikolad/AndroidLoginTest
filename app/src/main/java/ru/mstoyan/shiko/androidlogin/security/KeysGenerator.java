@@ -1,5 +1,6 @@
 package ru.mstoyan.shiko.androidlogin.security;
 
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -24,7 +25,6 @@ class KeysGenerator {
     private static final String PBE_ALGORITHM = "PBKDF2WithHmacSHA1";
 
     static KeysPair generateConfidentialKey(String password, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException, KeyStoreException {
-        KeysPair result = new KeysPair();
         final String salt = generateSalt();
         KeySpec keySpec = new PBEKeySpec(password.toCharArray(),salt.getBytes(),PBE_ITERATION_COUNT,
                 AES_KEY_LENGTH_BITS + HMAC_KEY_LENGTH_BITS);
@@ -36,14 +36,12 @@ class KeysGenerator {
         System.arraycopy(keyBytes,0,confidentialKeyBytes,0,confidentialKeyBytes.length);
         System.arraycopy(keyBytes,confidentialKeyBytes.length,integrityBytes,0,integrityBytes.length);
 
-        result.confidentialityKey = new SecretKeySpec(confidentialKeyBytes,algorithm);
-        result.integrityKey = new SecretKeySpec(integrityBytes,algorithm);
-
-        return result;
+        return new KeysPair(new SecretKeySpec(confidentialKeyBytes,algorithm),
+                new SecretKeySpec(integrityBytes,algorithm));
     }
 
     private static String generateSalt() throws NoSuchAlgorithmException {
-        String saltBuilder = String.valueOf(SALT.charAt(6)) +
+        return String.valueOf(SALT.charAt(6)) +
                 SALT.charAt(3) +
                 SALT.charAt(18) +
                 SALT.substring(7, 10) +
@@ -52,11 +50,5 @@ class KeysGenerator {
                 SALT_LENGTH +
                 "35" +
                 SALT.charAt(4);
-        return saltBuilder;
-    }
-
-    static class KeysPair{
-        SecretKey confidentialityKey;
-        SecretKey integrityKey;
     }
 }

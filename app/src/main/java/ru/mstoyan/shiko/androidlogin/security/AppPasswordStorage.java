@@ -23,8 +23,9 @@ import ru.mstoyan.shiko.androidlogin.service.DataRemoverService;
  * Saves and loads encrypted info.
  */
 
-public class AppPasswordStorage extends PasswordStorage {
+public class AppPasswordStorage implements PasswordStorage {
     private static final String mPasswordFileName = "x995fn4mkf90";
+    private static final String mKeyFileName = "fkkfiejrkewml2";
     private Context mContext;
     private Encryptor mEncryptor;
     private final static long DELTA_TIME = 5 * 60 * 1000;
@@ -38,14 +39,21 @@ public class AppPasswordStorage extends PasswordStorage {
 
     @Override
     public void saveLoginData(String name, String password) {
-        FileOutputStream passwordOutputStream;
+        FileOutputStream outputStream;
 
         try{
-            passwordOutputStream = mContext.openFileOutput(mPasswordFileName,Context.MODE_PRIVATE);
-            String encrypted = mEncryptor.encrypt(name + " " + password, password);
-            Log.w("encrypted",encrypted);
-            passwordOutputStream.write(encrypted.getBytes());
-            passwordOutputStream.close();
+            KeysPair keys = mEncryptor.getKeys(name + " " + password);
+
+            String encrypted = mEncryptor.encrypt(name + " " + password, keys);
+
+            //save encrypted data
+            outputStream = mContext.openFileOutput(mPasswordFileName,Context.MODE_PRIVATE);
+            outputStream.write(encrypted.getBytes());
+            outputStream.close();
+
+            //save integrity key
+            outputStream = mContext.openFileOutput(mKeyFileName, Context.MODE_PRIVATE);
+            outputStream.write(keys.getIntegrityKey().getEncoded());
 
         }catch ( GeneralSecurityException | IOException e){
             e.printStackTrace();
@@ -59,7 +67,9 @@ public class AppPasswordStorage extends PasswordStorage {
         try{
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String data = reader.readLine();
-            result = mEncryptor.decrypt(data, password);
+            KeysPair keys = mEncryptor.getKeys(name + " " + password);
+            if (mEncryptor.checkIntegrity(data, keys.getIntegrityKey()))
+                result = mEncryptor.decrypt(data, keys.getConfidentialityKey());
         } catch (GeneralSecurityException | IOException | ParseException e) {
             e.printStackTrace();
         }

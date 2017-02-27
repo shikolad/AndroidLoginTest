@@ -5,8 +5,10 @@ import android.util.Base64;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 
 import javax.crypto.Cipher;
@@ -18,7 +20,7 @@ import javax.crypto.spec.IvParameterSpec;
  * Encrypts/decrypts strings
  */
 
-public class AES_CBC_PKC_Encryptor extends Encryptor{
+public class AES_CBC_PKC_Encryptor implements Encryptor{
 
     private static final String CIPHER_TRANSFORMATION = "AES/CBC/PKCS5Padding";
     private static final String CIPHER_ALGORITHM = "AES";
@@ -27,37 +29,42 @@ public class AES_CBC_PKC_Encryptor extends Encryptor{
     private static final int IV_LENGTH_BYTES = 16;
     private static final int BASE64_FLAGS = Base64.NO_WRAP;
 
-    public String encrypt(String str, String password) throws UnsupportedEncodingException, GeneralSecurityException {
+    public KeysPair getKeys(String password) throws NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
+        return KeysGenerator.generateConfidentialKey(password,CIPHER_ALGORITHM);
+    }
 
-        KeysGenerator.KeysPair keysPair = KeysGenerator.generateConfidentialKey(password,CIPHER_ALGORITHM);
+    @Override
+    public boolean checkIntegrity(String str, SecretKey key) throws GeneralSecurityException {
+        EncryptedStruct data = new EncryptedStruct(str);
+        if (!data.checkMacIntegrity(key)){
+            throw new GeneralSecurityException("MAC stored in civ does not match computed MAC.");
+        }
+        return false;
+    }
+
+    public String encrypt(String str, KeysPair keysPair) throws UnsupportedEncodingException, GeneralSecurityException {
 
         byte[] rawData = str.getBytes(ENCODING);
 
         byte[] iv = generateIv();
         Cipher aesCipherForEncryption = Cipher.getInstance(CIPHER_TRANSFORMATION);
-        aesCipherForEncryption.init(Cipher.ENCRYPT_MODE, keysPair.confidentialityKey,new IvParameterSpec(iv));
+        aesCipherForEncryption.init(Cipher.ENCRYPT_MODE, keysPair.getConfidentialityKey(),new IvParameterSpec(iv));
         iv = aesCipherForEncryption.getIV();
         byte[] encoded = aesCipherForEncryption.doFinal(rawData);
-        EncryptedStruct struct = new EncryptedStruct(iv,encoded, keysPair.integrityKey);
+        EncryptedStruct struct = new EncryptedStruct(iv,encoded, keysPair.getIntegrityKey());
 
         return struct.toString();
     }
 
-    public String decrypt(String str, String password) throws ParseException, GeneralSecurityException {
-
-        KeysGenerator.KeysPair keysPair = KeysGenerator.generateConfidentialKey(password,CIPHER_ALGORITHM);
+    public String decrypt(String str, SecretKey confidentialityKey) throws ParseException, GeneralSecurityException {
 
         EncryptedStruct data = new EncryptedStruct(str);
-        if (!data.checkMacIntegrity(keysPair.integrityKey)){
-            throw new GeneralSecurityException("MAC stored in civ does not match computed MAC.");
-        }
 
         Cipher aesCipherForEncryption = Cipher.getInstance(CIPHER_TRANSFORMATION);
-        aesCipherForEncryption.init(Cipher.DECRYPT_MODE, keysPair.confidentialityKey, new IvParameterSpec(data.mIv));
+        aesCipherForEncryption.init(Cipher.DECRYPT_MODE, confidentialityKey, new IvParameterSpec(data.mIv));
         byte[] decrypted = aesCipherForEncryption.doFinal(data.mEncoded);
 
-        String result = new String(decrypted);
-        return result;
+        return new String(decrypted);
     }
 
     private boolean constantTimeEq(byte[] a, byte[] b){
@@ -116,13 +123,12 @@ public class AES_CBC_PKC_Encryptor extends Encryptor{
 
         @Override
         public String toString() {
-            String result = Base64.encodeToString(mIv, BASE64_FLAGS) +
+
+            return Base64.encodeToString(mIv, BASE64_FLAGS) +
                     ":" +
                     Base64.encodeToString(mEncoded, BASE64_FLAGS) +
                     ":" +
                     Base64.encodeToString(mac, BASE64_FLAGS);
-
-            return result;
         }
     }
 }
