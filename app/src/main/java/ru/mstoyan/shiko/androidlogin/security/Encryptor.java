@@ -24,4 +24,5 @@ interface Encryptor {
     boolean checkIntegrity(String str, SecretKey key) throws GeneralSecurityException;
     String encrypt(String str, KeysPair keys) throws UnsupportedEncodingException, GeneralSecurityException;
     String decrypt(String str, SecretKey confidentialityKey) throws ParseException, GeneralSecurityException;
+    String getKeyAlgorithm();
 }

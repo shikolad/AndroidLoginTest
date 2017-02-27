@@ -98,6 +98,10 @@ public class LoginActivity extends AppCompatActivity{
                 attemptLogin();
             }
         });
+
+        if (mPasswordStorage.isLoginDataSaved()){
+            startPostLoginActivity("#username");
+        }
     }
 
     @Override
@@ -130,15 +134,19 @@ public class LoginActivity extends AppCompatActivity{
     public void attemptLogin(){
         if (mLoginRule.check(getLoginString()) && mPasswordRule.check(getPasswordString())){
             if (mPasswordStorage.checkLoginData(getLoginString(),getPasswordString())){
-                Intent postLoginIntent = new Intent(this,PostLoginActivity.class)
-                        .putExtra(PostLoginActivity.USERNAME_KEY,getLoginString());
-                startActivity(postLoginIntent);
+                startPostLoginActivity(getLoginString());
             } else {
                 Toast.makeText(this, R.string.login_error,Toast.LENGTH_LONG).show();
             }
         } else {
             Toast.makeText(this,R.string.error_in_login_or_password,Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void startPostLoginActivity(String name) {
+        Intent postLoginIntent = new Intent(this,PostLoginActivity.class)
+                .putExtra(PostLoginActivity.USERNAME_KEY,name);
+        startActivity(postLoginIntent);
     }
 
 }

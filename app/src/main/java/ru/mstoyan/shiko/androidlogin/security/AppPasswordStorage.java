@@ -5,16 +5,23 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
+
+import javax.crypto.spec.SecretKeySpec;
+
+import static android.util.Base64.encode;
+import static android.util.Base64.encodeToString;
 
 import ru.mstoyan.shiko.androidlogin.R;
 import ru.mstoyan.shiko.androidlogin.service.DataRemoverService;
@@ -53,7 +60,8 @@ public class AppPasswordStorage implements PasswordStorage {
 
             //save integrity key
             outputStream = mContext.openFileOutput(mKeyFileName, Context.MODE_PRIVATE);
-            outputStream.write(keys.getIntegrityKey().getEncoded());
+            outputStream.write(encodeToString(keys.getIntegrityKey().getEncoded(), Base64.NO_WRAP).getBytes());
+            outputStream.close();
 
         }catch ( GeneralSecurityException | IOException e){
             e.printStackTrace();
@@ -89,8 +97,22 @@ public class AppPasswordStorage implements PasswordStorage {
 
     @Override
     public boolean isLoginDataSaved() {
-        File file = new File(mContext.getFilesDir(), mPasswordFileName);
-        return file.exists();
+        File encryptedFile = new File(mContext.getFilesDir(), mPasswordFileName);
+        File publicKeyFile = new File(mContext.getFilesDir(), mKeyFileName);
+        if (!encryptedFile.exists() && publicKeyFile.exists())
+            return false;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(encryptedFile));
+            String data = reader.readLine();
+            reader.close();
+
+            reader = new BufferedReader(new FileReader(publicKeyFile));
+            String keyData = reader.readLine();
+            return mEncryptor.checkIntegrity(data, new SecretKeySpec(Base64.decode(keyData,Base64.NO_WRAP), mEncryptor.getKeyAlgorithm()));
+        } catch (IOException | GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

@@ -16,6 +16,8 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import static android.util.Base64.encodeToString;
+
 /**
  * Encrypts/decrypts strings
  */
@@ -39,7 +41,7 @@ public class AES_CBC_PKC_Encryptor implements Encryptor{
         if (!data.checkMacIntegrity(key)){
             throw new GeneralSecurityException("MAC stored in civ does not match computed MAC.");
         }
-        return false;
+        return true;
     }
 
     public String encrypt(String str, KeysPair keysPair) throws UnsupportedEncodingException, GeneralSecurityException {
@@ -65,6 +67,11 @@ public class AES_CBC_PKC_Encryptor implements Encryptor{
         byte[] decrypted = aesCipherForEncryption.doFinal(data.mEncoded);
 
         return new String(decrypted);
+    }
+
+    @Override
+    public String getKeyAlgorithm() {
+        return CIPHER_ALGORITHM;
     }
 
     private boolean constantTimeEq(byte[] a, byte[] b){
@@ -124,11 +131,11 @@ public class AES_CBC_PKC_Encryptor implements Encryptor{
         @Override
         public String toString() {
 
-            return Base64.encodeToString(mIv, BASE64_FLAGS) +
+            return encodeToString(mIv, BASE64_FLAGS) +
                     ":" +
-                    Base64.encodeToString(mEncoded, BASE64_FLAGS) +
+                    encodeToString(mEncoded, BASE64_FLAGS) +
                     ":" +
-                    Base64.encodeToString(mac, BASE64_FLAGS);
+                    encodeToString(mac, BASE64_FLAGS);
         }
     }
 }
