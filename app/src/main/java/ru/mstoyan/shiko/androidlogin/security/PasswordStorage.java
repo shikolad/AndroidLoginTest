@@ -4,12 +4,12 @@ package ru.mstoyan.shiko.androidlogin.security;
  * Abstract class to save/load encrypted string.
  */
 
-public abstract class PasswordStorage {
-    public abstract void saveLoginData(String name, String password);
+public interface PasswordStorage {
+    abstract void saveLoginData(String name, String password);
 
-    public abstract boolean checkLoginData(String name, String password);
+    abstract boolean checkLoginData(String name, String password);
 
-    public abstract boolean isLoginDataSaved();
+    abstract boolean isLoginDataSaved();
 
-    public abstract void removeData();
+    abstract void removeData();
 }

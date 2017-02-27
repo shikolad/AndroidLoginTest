@@ -1,4 +1,4 @@
-package ru.mstoyan.shiko.androidlogin.utility.Rules;
+package ru.mstoyan.shiko.androidlogin.utility.кules;
 
 import android.content.Context;
 
